@@ -1,14 +1,31 @@
 <template>
-  <div class="field">
-    <span v-if="field.hasMine">🚩</span>
-    <span v-if="field.mineCount > 0">{{ field.mineCount }}</span>
+  <div v-bind:class="'field ' + fieldClass" v-on:click="onFieldClick">
+    <span v-if="this.revealed && field.hasMine">🚩</span>
+    <span v-if="this.revealed && field.mineCount > 0">{{ field.mineCount }}</span>
   </div>
 </template>
 
 <script>
   export default {
     name: 'Field',
-    props: ['field']
+    props: ['field'],
+    data: () => ({
+      revealed: false
+    }),
+    methods: {
+      onFieldClick () {
+        this.revealed = true;
+      }
+    },
+    computed: {
+      fieldClass () {
+        if (!this.revealed) {
+          return '';
+        }
+
+        return this.field.hasMine ? 'exploded' : 'revealed';
+      }
+    }
   };
 </script>
 
@@ -16,9 +33,11 @@
   .field {
     display: flex;
     border: 1px solid #ddd;
+    background: #eee;
     font-size: 14px;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
   }
 
   .field::before {
@@ -27,5 +46,13 @@
     width: 1px;
     height: 0;
     padding-bottom: calc(100% / 1);
+  }
+
+  .field.revealed {
+    background: none;
+  }
+
+  .field.exploded {
+    background: lightcoral;
   }
 </style>
