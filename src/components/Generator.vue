@@ -97,9 +97,9 @@
 
       countMinesAroundField (xPos, yPos) {
         const xMin = xPos > 0 ? xPos - 1 : 0;
-        const xMax = xPos < this.standards.fieldSize.x ? xPos + 1 : this.standards.fieldSize.x;
+        const xMax = xPos < this.standards.fieldSize.x - 1 ? xPos + 1 : this.standards.fieldSize.x - 1;
         const yMin = yPos > 0 ? yPos - 1 : 0;
-        const yMax = yPos < this.standards.fieldSize.y ? yPos + 1 : this.standards.fieldSize.y;
+        const yMax = yPos < this.standards.fieldSize.y - 1 ? yPos + 1 : this.standards.fieldSize.y - 1;
 
         return this.mines.filter(mine => {
           return mine[0] >= xMin && mine[0] <= xMax
