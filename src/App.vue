@@ -16,11 +16,17 @@
     data: () => ({
       standards: {
         fieldSize: {
-          x: 50,
-          y: 50
+          x: 10,
+          y: 10
         },
-        mineCount: 25
+        mineCount: 15
       }
     })
   };
 </script>
+
+<style>
+  body {
+    font-family: sans-serif;
+  }
+</style>

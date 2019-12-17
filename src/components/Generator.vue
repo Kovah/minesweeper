@@ -61,7 +61,7 @@
           xPos = this.randomInteger(0, xMax);
           yPos = this.randomInteger(0, yMax);
 
-          if (!this.checkIfMineExists(xPos, yPos)) {
+          if (!this.checkIfPositionHasMine(xPos, yPos)) {
             positionFound = true;
           }
         } while (positionFound === false);
@@ -69,27 +69,42 @@
         this.mines.push([xPos, yPos]);
       },
 
-      checkIfMineExists (xPos, yPos) {
+      checkIfPositionHasMine (xPos, yPos) {
         return this.mines.filter(mine => {
           return mine[0] === xPos && mine[1] === yPos;
         }).length > 0;
       },
 
       generateFields () {
-        for (let xPos = 0; xPos <= this.standards.fieldSize.x; xPos++) {
-          for (let yPos = 0; yPos <= this.standards.fieldSize.y; yPos++) {
+        for (let xPos = 0; xPos < this.standards.fieldSize.x; xPos++) {
+          for (let yPos = 0; yPos < this.standards.fieldSize.y; yPos++) {
             this.saveNewField(xPos, yPos);
           }
         }
       },
 
       saveNewField (xPos, yPos) {
-        const fieldHasMine = this.checkIfMineExists(xPos, yPos);
+        const fieldHasMine = this.checkIfPositionHasMine(xPos, yPos);
+        const mineCount = fieldHasMine ? 0 : this.countMinesAroundField(xPos, yPos);
+
         this.fields.push({
           x: xPos,
           y: yPos,
+          mineCount: mineCount,
           hasMine: fieldHasMine
         });
+      },
+
+      countMinesAroundField (xPos, yPos) {
+        const xMin = xPos > 0 ? xPos - 1 : 0;
+        const xMax = xPos < this.standards.fieldSize.x ? xPos + 1 : this.standards.fieldSize.x;
+        const yMin = yPos > 0 ? yPos - 1 : 0;
+        const yMax = yPos < this.standards.fieldSize.y ? yPos + 1 : this.standards.fieldSize.y;
+
+        return this.mines.filter(mine => {
+          return mine[0] >= xMin && mine[0] <= xMax
+            && mine[1] >= yMin && mine[1] <= yMax;
+        }).length;
       },
 
       randomInteger (min, max) {
