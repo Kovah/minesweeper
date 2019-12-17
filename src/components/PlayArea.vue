@@ -1,7 +1,7 @@
 <template>
   <div class="playarea">
     <Field
-        v-for="(field, index) in fields"
+        v-for="(field, index) in this.$store.getters.fields"
         v-bind:field="field"
         v-bind:index="index"
         v-bind:key="index"
@@ -15,7 +15,6 @@
   export default {
     name: 'PlayArea',
     components: {Field},
-    props: ['mines', 'fields']
   };
 </script>
 

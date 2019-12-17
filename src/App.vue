@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <h1>Minesweeper</h1>
-    <Generator :standards="standards"/>
+    <Generator/>
   </div>
 </template>
 
@@ -12,16 +12,7 @@
     name: 'app',
     components: {
       Generator
-    },
-    data: () => ({
-      standards: {
-        fieldSize: {
-          x: 10,
-          y: 10
-        },
-        mineCount: 15
-      }
-    })
+    }
   };
 </script>
 

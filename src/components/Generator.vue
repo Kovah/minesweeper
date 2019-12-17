@@ -4,7 +4,7 @@
       <button v-on:click="onGenerateClick">Generate new Field</button>
       <span v-if="isInitializingGame">Generating a new Mine Field for you...</span>
     </p>
-    <PlayArea v-if="gameIsReady" :mines="mines" :fields="fields"/>
+    <PlayArea v-if="gameIsReady"/>
   </div>
 </template>
 
@@ -14,44 +14,39 @@
   export default {
     name: 'Generator',
     components: {PlayArea},
-    props: ['standards'],
-    data: () => ({
-      gameInitActive: false,
-      fields: [],
-      mines: []
-    }),
     computed: {
       isInitializingGame () {
-        return this.gameInitActive;
+        return this.$store.state.game.gameInitActive;
       },
       gameIsReady () {
-        return !this.gameInitActive && this.mines.length > 0;
+        return !this.$store.state.game.gameInitActive
+          && this.$store.getters.mines.length > 0;
       }
     },
     methods: {
       onGenerateClick () {
-        this.gameInitActive = true;
+        this.$store.commit('setGameInitState', true);
 
-        this.mines = [];
-        this.fields = [];
+        this.$store.commit('resetGame');
+
         this.generateMines();
         this.generateFields();
 
         setTimeout(() => {
-          this.gameInitActive = false;
+          this.$store.commit('setGameInitState', false);
         }, 1000);
       },
 
       generateMines () {
-        const mineLimit = this.standards.mineCount;
+        const mineLimit = this.$store.state.settings.mineCount;
         for (let i = 1; i <= mineLimit; i++) {
           this.generateNewMine();
         }
       },
 
       generateNewMine () {
-        const xMax = this.standards.fieldSize.x;
-        const yMax = this.standards.fieldSize.y;
+        const xMax = this.$store.state.settings.fieldSize.x;
+        const yMax = this.$store.state.settings.fieldSize.y;
 
         let positionFound = false;
         let xPos = 0;
@@ -66,18 +61,18 @@
           }
         } while (positionFound === false);
 
-        this.mines.push([xPos, yPos]);
+        this.$store.commit('addNewMine', [xPos, yPos]);
       },
 
       checkIfPositionHasMine (xPos, yPos) {
-        return this.mines.filter(mine => {
+        return this.$store.state.game.mines.filter(mine => {
           return mine[0] === xPos && mine[1] === yPos;
         }).length > 0;
       },
 
       generateFields () {
-        for (let xPos = 0; xPos < this.standards.fieldSize.x; xPos++) {
-          for (let yPos = 0; yPos < this.standards.fieldSize.y; yPos++) {
+        for (let xPos = 0; xPos < this.$store.state.settings.fieldSize.x; xPos++) {
+          for (let yPos = 0; yPos < this.$store.state.settings.fieldSize.y; yPos++) {
             this.saveNewField(xPos, yPos);
           }
         }
@@ -87,7 +82,7 @@
         const fieldHasMine = this.checkIfPositionHasMine(xPos, yPos);
         const mineCount = fieldHasMine ? 0 : this.countMinesAroundField(xPos, yPos);
 
-        this.fields.push({
+        this.$store.commit('addNewField', {
           x: xPos,
           y: yPos,
           mineCount: mineCount,
@@ -97,11 +92,16 @@
 
       countMinesAroundField (xPos, yPos) {
         const xMin = xPos > 0 ? xPos - 1 : 0;
-        const xMax = xPos < this.standards.fieldSize.x - 1 ? xPos + 1 : this.standards.fieldSize.x - 1;
-        const yMin = yPos > 0 ? yPos - 1 : 0;
-        const yMax = yPos < this.standards.fieldSize.y - 1 ? yPos + 1 : this.standards.fieldSize.y - 1;
+        const xMax = xPos < this.$store.state.settings.fieldSize.x - 1
+          ? xPos + 1
+          : this.$store.state.settings.fieldSize.x - 1;
 
-        return this.mines.filter(mine => {
+        const yMin = yPos > 0 ? yPos - 1 : 0;
+        const yMax = yPos < this.$store.state.settings.fieldSize.y - 1
+          ? yPos + 1
+          : this.$store.state.settings.fieldSize.y - 1;
+
+        return this.$store.state.game.mines.filter(mine => {
           return mine[0] >= xMin && mine[0] <= xMax
             && mine[1] >= yMin && mine[1] <= yMax;
         }).length;
