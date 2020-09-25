@@ -10,6 +10,7 @@
 
 <script>
   import PlayArea from './PlayArea';
+  import { getMinesAroundField } from '../lib/helper';
 
   export default {
     name: 'Generator',
@@ -91,20 +92,7 @@
       },
 
       countMinesAroundField (xPos, yPos) {
-        const xMin = xPos > 0 ? xPos - 1 : 0;
-        const xMax = xPos < this.$store.state.settings.fieldSize.x - 1
-          ? xPos + 1
-          : this.$store.state.settings.fieldSize.x - 1;
-
-        const yMin = yPos > 0 ? yPos - 1 : 0;
-        const yMax = yPos < this.$store.state.settings.fieldSize.y - 1
-          ? yPos + 1
-          : this.$store.state.settings.fieldSize.y - 1;
-
-        return this.$store.state.game.mines.filter(mine => {
-          return mine[0] >= xMin && mine[0] <= xMax
-            && mine[1] >= yMin && mine[1] <= yMax;
-        }).length;
+        return getMinesAroundField(xPos, yPos).length;
       },
 
       randomInteger (min, max) {

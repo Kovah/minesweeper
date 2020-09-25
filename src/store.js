@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import { revealFreeFields } from './lib/helper';
 
 Vue.use(Vuex);
 
@@ -14,10 +15,10 @@ export default new Vuex.Store({
     },
     settings: {
       fieldSize: {
-        x: 10,
-        y: 10
+        x: 5,
+        y: 5
       },
-      mineCount: 15
+      mineCount: 5
     },
     game: {
       gameInitActive: false,
@@ -42,6 +43,10 @@ export default new Vuex.Store({
 
     addNewField (state, fieldData) {
       state.game.fields.push(fieldData);
+    },
+
+    revealedField (state, field) {
+      revealFreeFields(field);
     },
 
     incrementClicks (state) {

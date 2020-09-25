@@ -15,7 +15,11 @@
     methods: {
       onFieldClick () {
         this.revealed = true;
+        this.$store.commit('revealedField', this.field);
         this.$store.commit('incrementClicks');
+      },
+      setRevealed (isRevealed) {
+        this.revealed = isRevealed;
       }
     },
     computed: {
